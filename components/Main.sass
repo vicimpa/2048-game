@@ -1,0 +1,48 @@
+.game-box
+  width: 600px
+  height: 600px
+
+  position: fixed
+  border-radius: 10px
+  box-shadow: 0 0 30px #000
+  background-color: #b89c61ea
+
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
+
+  margin: auto
+  
+  .empty
+    width: 120px
+    height: 120px
+    background-color: rgba(255,255,255,0.1)
+    border-radius: 10px
+    display: inline-block
+    margin-top: 24px
+    margin-left: 24px
+    position: relative
+
+    span
+      visibility: hidden
+
+  .value
+    --x: 0
+    --y: 0
+    --val: '2'
+
+    position: absolute
+    width: 120px
+    height: 120px
+    background-color: #f00
+    border-radius: 10px
+    font-size: 64px
+    text-align: center
+    line-height: 120px
+    top: calc(24px + (144px * var(--y)))
+    left: calc(24px + (144px * var(--x)))
+    transition: top 0.3s, left 0.3s
+
+    &::before
+      content: var(--val)
