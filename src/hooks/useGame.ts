@@ -9,11 +9,30 @@ export type GameItem = {
   helper?: { id: number; value: number; };
 };
 
+
+const store = {
+  key: 'state',
+  save(state: (GameItem | null)[]) {
+    localStorage.setItem(this.key, state.map(item => item?.value ?? -1).join(';'));
+  },
+  get(): (GameItem | null)[] {
+    const data = (localStorage.getItem(this.key)?.split(';') ?? []).map(Number);
+    if (data.length !== 16 || data.findIndex(isNaN) !== -1)
+      return [];
+
+    return data.map((item, id) => item <= 0 ? null : { id: -16 + id, value: item });
+  }
+};
+
 export const useGame = () => {
-  const [state, setState] = useState<(GameItem | null)[]>([]);
+  const [state, setState] = useState<(GameItem | null)[]>(store.get());
   const id = useRef(0);
   const block = useRef(false);
   const change = useRef(false);
+
+  useEffect(() => {
+    store.save(state);
+  }, [state]);
 
   function spawn(count = 1) {
     setState(map => {

@@ -39,6 +39,21 @@ body {
   justify-content: center;
 }
 
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px
+}
+
+button {
+  color: #333;
+  padding: 5px 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 .game {
   --size: 100px;
   --padding: 20px;
@@ -79,5 +94,14 @@ body {
     font-size: calc((12 - var(--length) * 2) * 6px);
     left: calc((var(--size) + var(--padding)) * var(--x));
     top: calc((var(--size) + var(--padding)) * var(--y));
+  }
+
+  .link {
+    position: absolute;
+    top: calc(100% + 20px);
+    left: 0;
+    right: 0;
+    text-align: center;
+    margin: auto;
   }
 }

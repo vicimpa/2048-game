@@ -16,7 +16,7 @@ export const App = () => {
   const [scale, setScale] = useState(1);
 
   const resize = () => {
-    setScale(Math.min(innerHeight, innerWidth) / 600);
+    setScale(Math.min(innerHeight, innerWidth) / 700);
   };
 
   useWindowEvent('keydown', (e) => {
@@ -47,24 +47,28 @@ export const App = () => {
     .sort((a, b) => a.id - b.id);
 
   return (
-    <div className="game" style={{ transform: `scale(${scale})` }}>
-      <div className="map" >
-        {from(16, i => <div className="grid" key={i} />)}
-        {items.map(item => (
-          <div
-            key={`${item.id}:${item.value}`}
-            className="item"
-            style={{
-              '--x': item.x,
-              '--y': item.y,
-              '--color': color(item.value),
-              '--length': (item.value + '').length,
-            }}
-          >
-            {item.value}
-          </div>
-        ))}
+    <div className="container" style={{ transform: `scale(${scale})` }}>
+      <button onClick={() => game.restart()}>New game</button>
+      <div className="game" >
+        <div className="map" >
+          {from(16, i => <div className="grid" key={i} />)}
+          {items.map(item => (
+            <div
+              key={`${item.id}:${item.value}`}
+              className="item"
+              style={{
+                '--x': item.x,
+                '--y': item.y,
+                '--color': color(item.value),
+                '--length': (item.value + '').length,
+              }}
+            >
+              {item.value}
+            </div>
+          ))}
+        </div>
       </div>
+      <a target="_BLANK" className="link" href="https://github.com/vicimpa/2048-game">GitHub Repository</a>
     </div>
   );
 };
