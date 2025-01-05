@@ -105,7 +105,7 @@ export const useGame = () => {
       change.current = newMap.map(e => e?.value).join(',') !== prev;
       return newMap;
     });
-    await wait(300);
+    await wait(100);
     collect();
     if (change.current)
       spawn();
