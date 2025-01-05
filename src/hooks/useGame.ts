@@ -106,9 +106,10 @@ export const useGame = () => {
       return newMap;
     });
     await wait(100);
-    collect();
-    if (change.current)
+    if (change.current) {
+      collect();
       spawn();
+    }
     block.current = false;
   }
 
