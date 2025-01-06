@@ -1,6 +1,7 @@
 import { from, randitem } from "../library/array";
 import { useEffect, useRef, useState } from "react";
 
+import { storage } from "../library/storage";
 import { wait } from "../library/wait";
 
 export type GameItem = {
@@ -9,28 +10,36 @@ export type GameItem = {
   helper?: { id: number; value: number; };
 };
 
-
-const store = {
-  key: 'state',
-  save(state: (GameItem | null)[]) {
-    localStorage.setItem(this.key, state.map(item => item?.value ?? -1).join(';'));
-  },
-  get(): (GameItem | null)[] {
-    const data = (localStorage.getItem(this.key)?.split(';') ?? []).map(Number);
+const game = storage(
+  '2048-state',
+  (v): (GameItem | null)[] => {
+    const data = (v?.split(';') ?? []).map(Number);
     if (data.length !== 16 || data.findIndex(isNaN) !== -1)
       return [];
 
     return data.map((item, id) => item <= 0 ? null : { id: -16 + id, value: item });
+  },
+  (v) => {
+    return v.map(item => item?.value ?? -1).join(';');
   }
-};
+);
 
-const SCORE = +(localStorage.getItem('score') ?? 0);
-const HISCORE = +(localStorage.getItem('hiscore') ?? 0);
+const SCORE = storage(
+  '2048-score',
+  (v, _v = v ?? '0') => isNaN(+_v) ? 0 : +_v,
+  (v) => v + ''
+);
+
+const HISCORE = storage(
+  '2048-hiscore',
+  (v, _v = v ?? '0') => isNaN(+_v) ? 0 : +_v,
+  (v) => v + ''
+);
 
 export const useGame = () => {
-  const [state, setState] = useState<(GameItem | null)[]>(store.get());
-  const [score, setScore] = useState(isNaN(SCORE) ? 0 : SCORE);
-  const [hiscore, setHiscore] = useState(isNaN(HISCORE) ? 0 : HISCORE);
+  const [state, setState] = useState<(GameItem | null)[]>(game.restore());
+  const [score, setScore] = useState(SCORE.restore());
+  const [hiscore, setHiscore] = useState(HISCORE.restore());
   const id = useRef(0);
   const block = useRef(false);
   const change = useRef(false);
@@ -130,7 +139,7 @@ export const useGame = () => {
   }
 
   useEffect(() => {
-    store.save(state);
+    game.store(state);
   }, [state]);
 
   useEffect(() => {
@@ -141,11 +150,11 @@ export const useGame = () => {
 
   useEffect(() => {
     setHiscore(hiscore => Math.max(score, hiscore));
-    localStorage.setItem('score', score + '');
+    SCORE.store(score);
   }, [score]);
 
   useEffect(() => {
-    localStorage.setItem('hiscore', hiscore + '');
+    HISCORE.store(hiscore);
   }, [hiscore]);
 
   return {
