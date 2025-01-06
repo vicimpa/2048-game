@@ -1,5 +1,5 @@
+import { FC, useEffect, useLayoutEffect, useState } from "react";
 import { GameItem, useGame } from "./hooks/useGame";
-import { useLayoutEffect, useState } from "react";
 
 import { from } from "./library/array";
 import { useWindowEvent } from "./hooks/useWindowEvent";
@@ -9,6 +9,22 @@ type GamePos = { x: number; y: number; };
 const color = (value: number) => {
   const level = value.toString(2).slice(0, -1).length - 1;
   return `hsl(${level * 35}deg 60% 60%)`;
+};
+
+const NumValue: FC<{ value: number; toFixed?: number; }> = ({ value, toFixed = 0 }) => {
+  const [cur, setCur] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCur(current => current + (value - current) * .05);
+    }, 5);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [value]);
+
+  return cur.toFixed(toFixed);
 };
 
 export const App = () => {
@@ -48,7 +64,12 @@ export const App = () => {
 
   return (
     <div className="container" style={{ transform: `scale(${scale})` }}>
-      <button onClick={() => game.restart()}>New game</button>
+      <div className="header">
+        <span>Score: <b><NumValue value={game.score} /></b></span>
+        <span>Hiscore: <b><NumValue value={game.hiscore} /></b></span>
+        <div className="grow" />
+        <button onClick={() => game.restart()}>New game</button>
+      </div>
       <div className="game" >
         <div className="map" >
           {from(16, i => <div className="grid" key={i} />)}

@@ -17,12 +17,16 @@ body {
 }
 
 @keyframes show {
-  from {
-    transform: scale(0);
-    opacity: 0;
+  0% {
+    transform: scale(.5);
+    opacity: .5;
   }
 
-  to {
+  80% {
+    transform: scale(1.2);
+  }
+
+  100% {
     transform: scale(1);
     opacity: 1;
   }
@@ -45,6 +49,21 @@ body {
   justify-content: center;
   align-items: center;
   gap: 10px
+}
+
+.header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  span b {
+    font-family: monospace;
+  }
+
+  .grow {
+    flex-grow: 1;
+  }
 }
 
 button {
@@ -88,7 +107,7 @@ button {
     position: absolute;
     text-align: center;
     line-height: var(--size);
-    animation: .3s show;
+    animation: .1s show linear;
     transition: top .3s, left .1s;
     background-color: var(--color);
     font-size: calc((12 - var(--length) * 2) * 6px);

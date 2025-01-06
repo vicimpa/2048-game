@@ -24,15 +24,16 @@ const store = {
   }
 };
 
+const SCORE = +(localStorage.getItem('score') ?? 0);
+const HISCORE = +(localStorage.getItem('hiscore') ?? 0);
+
 export const useGame = () => {
   const [state, setState] = useState<(GameItem | null)[]>(store.get());
+  const [score, setScore] = useState(isNaN(SCORE) ? 0 : SCORE);
+  const [hiscore, setHiscore] = useState(isNaN(HISCORE) ? 0 : HISCORE);
   const id = useRef(0);
   const block = useRef(false);
   const change = useRef(false);
-
-  useEffect(() => {
-    store.save(state);
-  }, [state]);
 
   function spawn(count = 1) {
     setState(map => {
@@ -56,6 +57,7 @@ export const useGame = () => {
   function restart() {
     setState(from(16, null));
     spawn(2);
+    setScore(0);
   }
 
   async function move(vert: boolean, dir: boolean) {
@@ -83,7 +85,7 @@ export const useGame = () => {
             if (!item)
               return;
 
-            if (newRow[i - 1]?.value === item.value && !newRow[i - 1]?.helper) {
+            if (newRow[i - 1] && newRow[i - 1]?.value === item.value && !newRow[i - 1]?.helper) {
               item.helper = newRow[i - 1]!;
               newRow[i - 1] = item;
             } else {
@@ -118,6 +120,7 @@ export const useGame = () => {
       if (!item?.helper)
         return item;
       const { helper: _, value, ...other } = item;
+      setScore(v => v + value * 2);
       return { ...other, value: value * 2 };
     }));
   }
@@ -127,13 +130,28 @@ export const useGame = () => {
   }
 
   useEffect(() => {
+    store.save(state);
+  }, [state]);
+
+  useEffect(() => {
     if (!state.find(Boolean)) {
       restart();
     }
   }, []);
 
+  useEffect(() => {
+    setHiscore(hiscore => Math.max(score, hiscore));
+    localStorage.setItem('score', score + '');
+  }, [score]);
+
+  useEffect(() => {
+    localStorage.setItem('hiscore', hiscore + '');
+  }, [hiscore]);
+
   return {
     state,
+    score,
+    hiscore,
     restart,
     move,
     level,
