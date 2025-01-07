@@ -52,11 +52,10 @@ export const useGame = () => {
       while (count--) {
         const item = randitem([...free]);
         free.delete(item);
-        map = [...map];
-        map[item] = {
+        map = map.with(item, {
           id: id.current++,
           value: Math.random() > .9 ? 4 : 2
-        };
+        });
       }
 
       return map;
@@ -76,11 +75,8 @@ export const useGame = () => {
     setState(map => {
       const prev = map.map(e => e?.value).join(',');
       const newMap = from<GameItem | null>(16, null);
-      const index = (a: number, b: number) => vert ? (
-        a + b * 4
-      ) : (
-        a * 4 + b
-      );
+      const index = (a: number, b: number) => vert ?
+        (a + b * 4) : (a * 4 + b);
 
       from(4, a => from(4, b => map[index(a, b)]))
         .map(row => {
